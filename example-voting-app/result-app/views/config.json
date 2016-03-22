@@ -2,7 +2,7 @@
   "name":"Niko Kurtti",
   "twitter":"@n1kooo",
   "location":"Tampere, Finland",
-  "repo":["n1koo/votingapp_voting-app", \
+  "repo":["n1koo/votingapp_voting-app",
             "n1koo/votingapp_result-app"],
   "vote":"Python"
 }
