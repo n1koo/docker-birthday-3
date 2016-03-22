@@ -8,10 +8,7 @@ services:
     ports:
       - "80"
     networks:
-      - front-tier
       - back-tier
-    links:
-      - interlock:interlock
     environment:
       - INTERLOCK_DATA={"hostname":"votingapp","domain":"docker"}
 
@@ -45,13 +42,16 @@ services:
 
   interlock:
     image: ehazlett/interlock:latest
+    networks:
+      - front-tier
+      - back-tier
     ports:
       - "5003:80"
     volumes:
       - /var/lib/boot2docker:/etc/docker
     environment:
       - "constraint:node==swarm-master"
-    command: "--swarm-url https://192.168.99.116:3376 --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
+    command: "--swarm-url https://192.168.99.116:3376 --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin nginx start"
 
 volumes:
   db-data:
