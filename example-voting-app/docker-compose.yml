@@ -2,34 +2,31 @@ version: "2"
 
 services:
   voting-app:
-    build: ./voting-app/.
+    image: n1koo/votingapp_voting-app
     volumes:
      - ./voting-app:/app
     ports:
-      - "5000:80"
-    links:
-      - redis
+      - "80"
     networks:
       - front-tier
       - back-tier
+    links:
+      - interlock:interlock
+    environment:
+      - INTERLOCK_DATA={"hostname":"votingapp","domain":"docker"}
 
   result-app:
-    build: ./result-app/.
+    image: n1koo/votingapp_result-app
     volumes:
       - ./result-app:/app
     ports:
-      - "5001:80"
-    links:
-      - db
+      - "80"
     networks:
       - front-tier
       - back-tier
 
   worker:
     image: manomarks/worker
-    links:
-      - db
-      - redis
     networks:
       - back-tier
 
@@ -46,9 +43,21 @@ services:
     networks:
       - back-tier
 
+  interlock:
+    image: ehazlett/interlock:latest
+    ports:
+      - "5003:80"
+    volumes:
+      - /var/lib/boot2docker:/etc/docker
+    environment:
+      - "constraint:node==swarm-master"
+    command: "--swarm-url https://192.168.99.116:3376 --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin haproxy start"
+
 volumes:
   db-data:
 
 networks:
-  front-tier:
-  back-tier:
+  front-tier: 
+    driver: overlay
+  back-tier: 
+    driver: overlay
