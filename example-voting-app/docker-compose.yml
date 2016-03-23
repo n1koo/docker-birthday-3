@@ -9,8 +9,8 @@ services:
       - "80"
     networks:
       - back-tier
-    environment:
-      - INTERLOCK_DATA={"hostname":"votingapp","domain":"docker"}
+    labels:
+          - "interlock.ext.name=votingapp.docker"
 
   result-app:
     image: n1koo/votingapp_result-app
@@ -41,7 +41,7 @@ services:
       - back-tier
 
   interlock:
-    image: ehazlett/interlock:latest
+    image: ehazlett/interlock:1.0.1
     networks:
       - front-tier
       - back-tier
@@ -51,7 +51,7 @@ services:
       - /var/lib/boot2docker:/etc/docker
     environment:
       - "constraint:node==swarm-master"
-    command: "--swarm-url https://192.168.99.116:3376 --swarm-tls-ca-cert=/etc/docker/ca.pem --swarm-tls-cert=/etc/docker/server.pem --swarm-tls-key=/etc/docker/server-key.pem --debug --plugin nginx start"
+    command: "--discovery https://192.168.99.116:3376 --discovery-tls-ca-cert=/etc/docker/ca.pem --discovery-tls-cert=/etc/docker/server.pem --discovery-tls-key=/etc/docker/server-key.pem --debug start"
 
 volumes:
   db-data:
